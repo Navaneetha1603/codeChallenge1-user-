@@ -71,35 +71,95 @@ const userById=async(req,res)=>{
     let id=req.params.Id;
     console.log(id);
     try{
-        const users=await User.find({"_id":id});
-        return res.json({data:users});}
+        // const users=await User.find({"_id":id});
+        const data=await User.findById(id);
+        console.log("data"+data);
+    if(!data){
+        res.status(200).send({message:`cannot find the is=${id}`})
+    }
+    else
+    return res.json({data:users});}
         catch(err){
             return res.status(400).json(err)
         }
 }
-//update the username
-const updateUserId=async(req,res)=>{
-    let id=req.params.Id;
-    console.log(id);
+const updateUserId=async (req,res)=>{
+    const id=req.params.Id;
     try{
-        const users=await User.updateOne({"_id":id},
-        {
-            $set:{"firstname":"Neethu"}
-        }
-        );
-        return res.json({message:"updated"})
+    let data=await User.findByIdAndUpdate(id,req.body)
+    console.log("data"+data);
+    if(!data){
+        res.status(200).send({message:`can not update the is=${id}`})
+    }
+    else
+      res.send({message:`updated successfully`})
     }
     catch(err){
-        return res.status(400).json(err)
+        return res.status(200).json(err);
     }
+
 }
+//update the username
+// const updateUserId=(req,res)=>{
+//    if(!req.body){
+//        return res.status(400).send({
+//         message:"data to update can not be empty!"
+//        });
+//    }
+//    const id=req.params.Id;
+//    User.findByIdAndUpdate(id,req.body,{useFindAndModify:false})
+//    .then(data=>{
+//        if(!data){
+//            res.status(200).send({
+//                message:`cannot update the id =${id}`
+//            });
+//        }
+//        else res.send({message:`updated successfully`})
+//    })
+//    .catch(err=>
+//     res.status(200).send({
+//         message:"error is updating"+id
+//     }))
+// }
+// const updateUserId=async(req,res)=>{
+//     let id=req.params.Id;
+//     // user.firstname=req.body.firstname;
+//     // let fname=user.firstname;
+//     // let lname=user.lastname=req.body.lastname;
+//     // let emailId=user.emailId=req.body.emailId;
+//     // let age=user.age=req.body.age;
+//     // console.log("fname:"+fname +"lname:"+lname +"emailId:"+emailId+"age:"+age);
+//     console.log(id);
+//     // console.log("fname"+fname);
+//     try{
+//         const users=await User.updateOne({"_id":id},
+//         // await User.updateOne({"_id":id},
+//         {
+//             $set:{"firstname":"Neethu"}
+//             // $set:{"firstname":fname,"lastname":lname,"emailId":emailId,"age":age}
+//             // $set:{"firstname":fname}
+//         }
+//         );
+        
+//         return res.json({message:"updated"})
+//     }
+//     catch(err){
+//         return res.status(400).json(err)
+//     }
+// }
 //deleteId 
 const deleteUserId=async(req,res)=>{
     let id=req.params.Id;
     console.log(id);
+    //if u want to delete many details
+    // User.deleteMany({});
     try{
         const users=await User.findByIdAndDelete(id);
-        return res.json({message:"deleted"})
+        if(!users){
+        res.status(200).send({message:`can not find  the id=${id}`})
+        }
+        else{
+        return res.json({message:"deleted"})}
     }
     catch(err){
         return res.status(400).json(err)
